@@ -1,0 +1,35 @@
+.home{
+    .input_wrap {
+        width: 70%;
+        margin: 10px auto;
+    }
+
+    .tag_wrap {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 20px;
+        margin-bottom: 0;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+
+        li {
+            display: flex;
+            align-items: center;
+
+            &.active {
+                color: #fff;
+                background: #0084ff;
+                padding: 0 10px;
+                border-radius: 10px;
+            }
+        }
+
+    }
+
+    .note_wrap {
+        padding: 20px;
+        // margin-top: 10px;
+
+    }
+}

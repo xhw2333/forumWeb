@@ -1,0 +1,16 @@
+.main {
+    height: 100%;
+    width: 100%;
+    background: #f1f1f1;
+
+    .main_wrap {
+        font-size: 16px;
+        width: 75%;
+        margin: 20px auto;
+        background: #fff;
+        min-height: calc(100% - 130px);
+        padding: 10px;
+        // box-sizing: border-box;
+        box-shadow: 0 1px 3px rgba(26, 26, 26, .2);
+    }
+}

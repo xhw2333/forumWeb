@@ -1,0 +1,22 @@
+.friend {
+    padding: 0 20px;
+
+    .top {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .friend_list {
+        margin: 20px 0;
+    }
+}
+
+#friend_wrap {
+    padding: 0 10px;
+
+    .table {
+        margin-top: 20px;
+    }
+}
