@@ -1,16 +1,21 @@
 import React, { Component } from "react";
+import {withRouter} from 'react-router-dom';
 import { Tag } from "antd";
 import { UserOutlined, MessageOutlined,LikeOutlined } from "@ant-design/icons";
 import "./noteItem.scss";
 
-export default class noteItem extends Component {
+class noteItem extends Component {
   state = {
     title: "",
   };
 
+  goDetail = ()=>{
+    this.props.history.push('/main/detail');
+  }
+
   render() {
     return (
-      <div className="note_item">
+      <div className="note_item" onClick={this.goDetail}>
         <div className="top">
           <h3 className="title">test</h3>
           <Tag>学习</Tag>
@@ -41,3 +46,5 @@ export default class noteItem extends Component {
     );
   }
 }
+
+export default withRouter(noteItem);

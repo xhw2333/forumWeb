@@ -5,6 +5,9 @@ import Home from "../home/home";
 import Note from "../note/note";
 import Friend from "../friend/friend";
 import Me from "../me/me";
+import Detail from "../detail/detail";
+import Publish from "../publish/publish";
+import Footer from "../../component/footer/footer";
 // import {Button} from 'antd';
 import "./main.scss";
 export default class main extends Component {
@@ -18,9 +21,12 @@ export default class main extends Component {
             <Route exact path="/main/note" component={Note}></Route>
             <Route exact path="/main/friend" component={Friend}></Route>
             <Route exact path="/main/me" component={Me}></Route>
+            <Route exact path="/main/detail" component={Detail}></Route>
+            <Route exact path="/main/publish" component={Publish}></Route>
             <Redirect to="/main/home"></Redirect>
           </Switch>
         </div>
+        <Footer></Footer>
       </div>
     );
   }

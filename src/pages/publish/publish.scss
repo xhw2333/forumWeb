@@ -1,0 +1,32 @@
+.publish {
+    .top {
+        padding: 10px;
+    }
+
+    .pub_note_wrap {
+        // padding: 0 50px;
+
+        >div {
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+
+            > span {
+                margin-right: 20px;
+            }
+
+            &.content {
+                align-items: flex-start;
+            }
+
+            &.btn_wrap {
+                margin-top: 30px;
+                .btn {
+                    margin: 0 20px;
+                }
+            }
+        }
+    }
+}

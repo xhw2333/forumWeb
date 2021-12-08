@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Button, Table, Space, Tag, Modal, message } from "antd";
 import "./note.scss";
 
@@ -45,7 +46,10 @@ export default class note extends Component {
             <Button type="danger" onClick={() => this.handleDelete(e)}>
               删除
             </Button>
-            <Button type="primary" onClick={() => this.showMore(e)}>
+            <Button type="primary" onClick={() => this.props.history.push('/main/publish')}>
+              修改
+            </Button>
+            <Button onClick={() => this.showMore(e)}>
               更多
             </Button>
           </Space>
@@ -80,7 +84,7 @@ export default class note extends Component {
   //显示更多
   showMore = (e) => {
     console.log(e);
-    this.props.history.push("/main/home");
+    this.props.history.push("/main/detail");
   };
 
   render() {
@@ -89,7 +93,9 @@ export default class note extends Component {
       <div className="note">
         <div className="top">
           <h3>我发布的贴文</h3>
-          <Button type="primary">+ 写贴文</Button>
+          <Link to="/main/publish">
+            <Button type="primary">+ 写贴文</Button>
+          </Link>
         </div>
         <div className="note_wrap">
           <Table
