@@ -1,4 +1,4 @@
-.home{
+.home {
     .input_wrap {
         width: 70%;
         margin: 10px auto;
@@ -16,12 +16,13 @@
         li {
             display: flex;
             align-items: center;
+            cursor: pointer;
+            padding: 0 10px;
+            border-radius: 10px;
 
             &.active {
                 color: #fff;
                 background: #0084ff;
-                padding: 0 10px;
-                border-radius: 10px;
             }
         }
 

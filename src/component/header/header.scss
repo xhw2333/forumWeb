@@ -32,4 +32,14 @@
             }
         }
     }
+
+    .tip_wrap {
+        span {
+            cursor: pointer;
+
+            &:hover {
+                color: #0084ff;
+            }
+        }
+    }
 }

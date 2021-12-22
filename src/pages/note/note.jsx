@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Table, Space, Tag, Modal, message } from "antd";
+import ajax from "../../api/ajax";
 import "./note.scss";
 
 export default class note extends Component {
@@ -13,8 +14,8 @@ export default class note extends Component {
       },
       {
         title: "创作者",
-        dataIndex: "name",
-        key: "name",
+        dataIndex: "author",
+        key: "author",
       },
       {
         title: "创作日期",
@@ -23,19 +24,12 @@ export default class note extends Component {
       },
       {
         title: "标签",
-        dataIndex: "tags",
-        key: "tags",
-        render: (tags) => (
-          <span>
-            {tags.map((tag, index) => {
-              return (
-                <Tag color={"blue"} key={tag}>
-                  {tag}
-                </Tag>
-              );
-            })}
-          </span>
-        ),
+        dataIndex: "tag",
+        key: "tag",
+        render: (tag,note) => {
+          // console.log(tag, note);
+          return <Tag color={note.color}>{tag}</Tag>;
+        },
       },
       {
         title: "操作",
@@ -46,23 +40,24 @@ export default class note extends Component {
             <Button type="danger" onClick={() => this.handleDelete(e)}>
               删除
             </Button>
-            <Button type="primary" onClick={() => this.props.history.push('/main/publish')}>
+            <Button
+              type="primary"
+              onClick={() => this.props.history.push("/main/publish")}
+            >
               修改
             </Button>
-            <Button onClick={() => this.showMore(e)}>
-              更多
-            </Button>
+            <Button onClick={() => this.showMore(e)}>更多</Button>
           </Space>
         ),
       },
     ],
-    dataSource: [
+    noteList: [
       {
-        key: "1",
-        name: "xhw",
-        title: "4088",
-        date: "2020-12-11",
-        tags: [1, 2],
+        key: '1',
+        title: "合肥",
+        author: "xhw",
+        date: "2021-12-08",
+        tag: "生活",
       },
     ],
   };
@@ -87,8 +82,34 @@ export default class note extends Component {
     this.props.history.push("/main/detail");
   };
 
+  // 获取贴文
+  getMyNote = (uid = 1) => {
+    ajax("/notelist", { uid })
+      .then((res) => {
+        console.log(res);
+        const { status, data, msg } = res;
+        if (status !== 1) return message.error(msg,1);
+        const noteList = data.map((note, index) => {
+          return {
+            ...note,
+            key: +index + 1,
+          };
+        });
+        this.setState({ noteList });
+        message.success("获取贴文成功",1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  componentWillMount() {
+    // this.getMyNote(1);
+  }
+
   render() {
-    const { columns, dataSource } = this.state;
+    const { columns, noteList } = this.state;
+    console.log(noteList);
     return (
       <div className="note">
         <div className="top">
@@ -101,7 +122,7 @@ export default class note extends Component {
           <Table
             pagination={false}
             columns={columns}
-            dataSource={dataSource}
+            dataSource={noteList}
             bordered
           ></Table>
         </div>

@@ -6,22 +6,31 @@
     align-items: center;
     font-size: 18px;
     background: #fff;
+    background-image: url("../../assets/bg.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 
-    .wrap {
-        padding: 40px 40px 30px;
+    .reg_wrap,
+    .login_wrap {
+        padding: 50px 40px 40px;
         border: 1px solid #000;
+        // background: rgba(0, 0, 0, 0.6);
+        background: rgba(5, 5, 70, 0.5);
+        color: #fff;
 
         h3 {
             margin-bottom: 30px;
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 600;
             text-align: center;
+            color: #fff;
         }
-        >div{
+
+        >div {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 300px;
+            width: 350px;
             margin: 20px 0;
 
             >span {
@@ -32,6 +41,20 @@
         .submit {
             margin-top: 40px;
             justify-content: center;
+        }
+
+        .to {
+            font-size: 12px;
+            justify-content: center;
+
+            >span {
+                text-decoration: underline;
+                cursor: pointer;
+
+                &:hover {
+                    color: #1890ff;
+                }
+            }
         }
     }
 }
