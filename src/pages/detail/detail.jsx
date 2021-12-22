@@ -1,30 +1,45 @@
 import React, { Component } from "react";
-import { Tag, List, Avatar, Input, Button } from "antd";
+import { Tag, List, Avatar, Input, Button, message } from "antd";
 import { LikeFilled, MessageFilled } from "@ant-design/icons";
+import ajax from "../../api/ajax";
 import "./detail.scss";
 
 export default class detail extends Component {
   state = {
-    list: [
+    // 评论区
+    commentList: [
       {
-        name: "xhw",
-        comment: "你好",
-      },
-      {
-        name: "xhw",
-        comment: "你好",
+        cid: -1,
+        commenter: "***",
+        content: "***",
+        nid: -1,
+        uid: -1,
       },
     ],
     // 评论框
     commentVisible: false,
     // 点赞modal
-    praiseModal: false,
+    praiseStatus: false,
+    // 贴文详情
+    note: {
+      author: "****",
+      color: "#333",
+      comment: 2,
+      content: "****",
+      date: "2021-12-08",
+      nid: -1,
+      praise: 1,
+      tag: "其他",
+      tid: 4,
+      title: "***",
+      uid: 1,
+    },
   };
 
   //   控制点赞
   togglePraise = () => {
-    const { praiseModal } = this.state;
-    this.setState({ praiseModal: !praiseModal });
+    const { praiseStatus } = this.state;
+    this.setState({ praiseStatus: !praiseStatus });
   };
 
   //   控制评论框显示
@@ -33,24 +48,61 @@ export default class detail extends Component {
     this.setState({ commentVisible: !commentVisible });
   };
 
+  getNoteDetail = async (nid) => {
+    try {
+      // 贴文详情
+      {
+        const { status, msg, data } = await ajax("/notelist", { nid });
+        if (status !== 1) return message.error(msg, 1);
+        this.setState({ note: data });
+      }
+
+      // 评论详情
+      {
+        const { status, msg, data } = await ajax("/commentlist", { nid });
+        if (status !== 1) return message.error(msg, 1);
+        this.setState({commentList:data});
+      }
+
+      // 点赞详情
+      {
+        let uid = 1;
+        const { status, msg, data } = await ajax("/ifpraise", { nid,uid });
+        if (status !== 1) return message.error(msg, 1);
+        this.setState({praiseStatus:data});
+      }
+
+      message.success("获取贴文详情成功",1);
+    } catch (e) {
+      message.error("服务器内部错误");
+    }
+  };
+
+  componentDidMount() {
+    // console.log(this.props);
+    const { nid } = this.props.location.query || {};
+    console.log(nid);
+    // this.getNoteDetail(nid);
+  }
+
   render() {
-    const { list, commentVisible, praiseModal } = this.state;
+    const { commentList, commentVisible, praiseStatus, note } = this.state;
     return (
       <div className="detail">
-        <h3>标题</h3>
+        <h3>{note.title}</h3>
         <div className="tips">
-          <strong>xhw2333</strong>
-          <span>2019-01-01</span>
-          <Tag>学习</Tag>
+          <strong>{note.author}</strong>
+          <span>{note.date}</span>
+          <Tag color={note.color}>{note.tag}</Tag>
         </div>
-        <div className="content">内容</div>
+        <div className="content">{note.content}</div>
         <div className="tool">
           <LikeFilled
             onClick={this.togglePraise}
             style={{
               fontSize: 20,
               cursor: "pointer",
-              color: praiseModal ? "#0084ff":"#999aaa", //f8f8f8
+              color: praiseStatus ? "#0084ff" : "#999aaa", //f8f8f8
             }}
           />
           <MessageFilled
@@ -76,16 +128,17 @@ export default class detail extends Component {
           <h4 className="title">评论区</h4>
           <List
             className="friend_list"
-            dataSource={list}
+            dataSource={commentList}
             size="large"
             bordered
             renderItem={(item) => (
               <List.Item>
                 <List.Item.Meta
                   avatar={<Avatar />}
-                  title={item.name}
-                  description="此用户很赖，没有介绍"
+                  title={item.commenter}
+                  description={item.content}
                 />
+                <Button type="danger">删除</Button>
               </List.Item>
             )}
           />

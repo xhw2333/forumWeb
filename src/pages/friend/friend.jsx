@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { List, Avatar, Button, Modal, message, Input, Table } from "antd";
+import ajax from '../../api/ajax';
 import "./friend.scss";
 
 export default class friend extends Component {
   state = {
-    list: [
+    friendList: [
       {
         uid: 1,
         name: "xhw",
@@ -14,8 +15,8 @@ export default class friend extends Component {
         name: "xhw233",
       },
     ],
-    friendModal: false,
-    data: "",
+    friendModal: false, //好友搜索展示框
+    // 搜索好友展示用
     columns: [
       {
         title: "用户",
@@ -79,8 +80,25 @@ export default class friend extends Component {
     //   this.searchVal.state.value = '';
   };
 
+  // 获取好友列表
+  getFriendList = (uid=1)=>{
+    ajax('/friendlist',{uid}).then(res=>{
+      console.log(res);
+      const {status,msg,data} = res;
+      if(status !== 1) return message.error(msg,1);
+      message.success("获取好友列表成功");
+      this.setState({friendList:data});
+    }).catch(err=>{
+      console.log(err);
+    })
+  }
+
+  componentWillMount(){
+    // this.getFriendList();
+  }
+
   render() {
-    const { list, friendModal, columns, dataSource } = this.state;
+    const { friendList, friendModal, columns, dataSource } = this.state;
     return (
       <div className="friend">
         <div className="top">
@@ -89,7 +107,7 @@ export default class friend extends Component {
         </div>
         <List
           className="friend_list"
-          dataSource={list}
+          dataSource={friendList}
           size="large"
           bordered
           renderItem={(item) => (
@@ -135,21 +153,6 @@ export default class friend extends Component {
           ]}
         >
           <div id="friend_wrap">
-            {/* <div className="">
-                <span>标题</span>
-                <Input
-                  ref={(c) => (this.name = c)}
-                  style={{ width: "70%" }}
-                ></Input>
-              </div>
-              <div className="content">
-                <span>内容</span>
-                <Input.TextArea
-                  ref={(c) => (this.name = c)}
-                  style={{ width: "70%" }}
-                  autoSize={{ minRows: 5, maxRows: 8 }}
-                ></Input.TextArea>
-              </div> */}
             <Input.Search
               placeholder="输入关键字搜索好友"
               ref={(c) => (this.searchVal = c)}

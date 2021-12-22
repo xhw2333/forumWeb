@@ -21,8 +21,8 @@ class noteItem extends Component {
     },
   };
 
-  goDetail = () => {
-    this.props.history.push("/main/detail");
+  goDetail = (nid) => {
+    this.props.history.push({ pathname: "/main/detail", query: { nid } });
   };
 
   render() {
@@ -35,7 +35,7 @@ class noteItem extends Component {
     return (
       <div className="note_item">
         <div className="top">
-          <h3 className="title" onClick={this.goDetail}>
+          <h3 className="title" onClick={() => this.goDetail(note.nid)}>
             {note.title}
           </h3>
           <Tag color={note.color}>{note.tag}</Tag>

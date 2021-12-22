@@ -1,22 +1,50 @@
 import React, { Component } from "react";
-import { Input, Button, Statistic } from "antd";
+import { Input, Button, Statistic, message } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import Pie from "../../component/pieChart/pieChart";
+import ajax from "../../api/ajax";
 import "./me.scss";
 
 export default class me extends Component {
   state = {
     name: "test",
     visible: false,
+    friendCount: 0, //好友数
+    noteTotal: 0, //贴文总数
+    // 贴文分类情况
+    classify: [
+
+    ]
   };
 
+  // 控制开关
   toggleBtn = () => {
     const { visible } = this.state;
     this.setState({ visible: !visible });
   };
 
+  // 获取用户基本情况
+  getUserBase = (uid = 1) => {
+    ajax("/base", { uid }, "POST")
+      .then((res) => {
+        console.log(res);
+        const { status, msg, data } = res;
+        if (status !== 1) return message.error(msg, 1);
+        message.success("获取用户基本情况成功",1);
+        const { friendCount, noteTotal, classify } = data;
+        this.setState({friendCount,noteTotal,classify});
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  componentWillMount() {
+    this.getUserBase(1);
+  }
+
   render() {
-    const { name, visible } = this.state;
+    const { name, visible, friendCount, noteTotal,classify } = this.state;
     return (
       <div className="me">
         <div className="title">
@@ -26,10 +54,10 @@ export default class me extends Component {
           <div className="left">
             <h4>用户基本情况</h4>
             <div className="wrap">
-              <Statistic className="item" title="发帖总数" value={113} />
-              <Statistic className="item" title="好友数" value={112} />
+              <Statistic className="item" title="发帖总数" value={noteTotal} />
+              <Statistic className="item" title="好友数" value={friendCount} />
             </div>
-            <Pie></Pie>
+            <Pie noteTotal={noteTotal} classify={classify}></Pie>
           </div>
 
           <div className="message">
@@ -55,7 +83,6 @@ export default class me extends Component {
               className="pwd"
               style={{
                 visibility: visible ? "visible" : "hidden",
-                transition: "all 0",
               }}
             >
               <span>确认新密码</span>
