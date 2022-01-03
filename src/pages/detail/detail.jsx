@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { Tag, List, Avatar, Input, Button, message } from "antd";
+import { Tag, List, Avatar, Input, Button, message, Modal } from "antd";
 import { LikeFilled, MessageFilled } from "@ant-design/icons";
 import ajax from "../../api/ajax";
+import global from "../../store/index";
+import { checkValIsNull } from "../../utils/check";
 import "./detail.scss";
 
 export default class detail extends Component {
@@ -18,8 +20,10 @@ export default class detail extends Component {
     ],
     // 评论框
     commentVisible: false,
-    // 点赞modal
-    praiseStatus: false,
+    // 点赞状态
+    ifPraise: false,
+    // 评论框内容
+    comment: "",
     // 贴文详情
     note: {
       author: "****",
@@ -38,8 +42,42 @@ export default class detail extends Component {
 
   //   控制点赞
   togglePraise = () => {
-    const { praiseStatus } = this.state;
-    this.setState({ praiseStatus: !praiseStatus });
+    const { ifPraise, note } = this.state;
+    const { user } = global;
+    const data = {
+      nid: note.nid,
+      uid: user.uid,
+    };
+    // 已是点赞状态，准备取消赞
+    if (ifPraise) {
+      ajax("/cancelpraise", data, "POST")
+        .then((res) => {
+          console.log(res);
+          const { status, msg } = res;
+          if (status !== 1) return message.error(msg, 1);
+
+          message.success(msg, 1);
+          this.setState({ ifPraise: !ifPraise });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    // 已是没赞的状态，正准备点赞
+    else {
+      ajax("/praise", data, "POST")
+        .then((res) => {
+          console.log(res);
+          const { status, msg } = res;
+          if (status !== 1) return message.error(msg, 1);
+
+          message.success(msg, 1);
+          this.setState({ ifPraise: !ifPraise });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   //   控制评论框显示
@@ -48,8 +86,11 @@ export default class detail extends Component {
     this.setState({ commentVisible: !commentVisible });
   };
 
+  // 获取贴文有关信息
   getNoteDetail = async (nid) => {
     try {
+      const { user } = global;
+
       // 贴文详情
       {
         const { status, msg, data } = await ajax("/notelist", { nid });
@@ -58,24 +99,99 @@ export default class detail extends Component {
       }
 
       // 评论详情
-      {
-        const { status, msg, data } = await ajax("/commentlist", { nid });
-        if (status !== 1) return message.error(msg, 1);
-        this.setState({commentList:data});
-      }
+      this.getComment(nid);
 
       // 点赞详情
       {
-        let uid = 1;
-        const { status, msg, data } = await ajax("/ifpraise", { nid,uid });
+        const { status, msg, data } = await ajax("/ifpraise", {
+          nid,
+          uid: user.uid,
+        });
         if (status !== 1) return message.error(msg, 1);
-        this.setState({praiseStatus:data});
+        this.setState({ ifPraise: data });
       }
 
-      message.success("获取贴文详情成功",1);
+      message.success("获取贴文详情成功", 1);
     } catch (e) {
-      message.error("服务器内部错误",1);
+      message.error("服务器内部错误", 1);
     }
+  };
+
+  // 获取评论
+  getComment = (nid) => {
+    ajax("/commentlist", { nid })
+      .then((res) => {
+        const { status, msg, data } = res;
+        if (status !== 1) return message.error(msg, 1);
+        this.setState({ commentList: data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 处理评论
+  handleComment = (e) => {
+    this.setState({ comment: e.target.value });
+  };
+
+  // 处理评论回车事件
+  handleEnter = (e)=>{
+    if(e.keyCode === 13){
+      this.commitComment();
+    }
+  }
+
+  // 提交评论
+  commitComment = () => {
+    const { comment, note } = this.state;
+    const { user } = global;
+
+    const data = {
+      content: comment,
+      nid: note.nid,
+      uid: user.uid,
+    };
+
+    if (checkValIsNull(comment)) return message.error("请输入评论！");
+
+    // 评论
+    ajax("/addcomment", data, "POST")
+      .then((res) => {
+        const { status, msg } = res;
+        if (status !== 1) return message.error(msg, 1);
+        message.success("评论成功", 1);
+        // 清空评论
+        this.setState({ comment: "" });
+        this.getComment(note.nid);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // 删除评论
+  deleteComment = (cid, uid, nid) => {
+    Modal.confirm({
+      title: `确认删除该评论`,
+      okText: "确认",
+      cancelText: "取消",
+      onOk: () => {
+        const { user } = global;
+        if (uid !== user.uid) return message.error("无法删除别人的评论！");
+        ajax("/deletecomment", { cid, uid }, "POST")
+          .then((res) => {
+            console.log(res);
+            const { status, msg } = res;
+            if (status !== 1) return message.error(msg, 1);
+            message.success(msg, 1);
+            this.getComment(nid);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    });
   };
 
   componentDidMount() {
@@ -86,7 +202,8 @@ export default class detail extends Component {
   }
 
   render() {
-    const { commentList, commentVisible, praiseStatus, note } = this.state;
+    const { commentList, commentVisible, ifPraise, note, comment } = this.state;
+    const { user } = global;
     return (
       <div className="detail">
         <h3>{note.title}</h3>
@@ -102,7 +219,7 @@ export default class detail extends Component {
             style={{
               fontSize: 20,
               cursor: "pointer",
-              color: praiseStatus ? "#0084ff" : "#999aaa", //f8f8f8
+              color: ifPraise ? "#0084ff" : "#999aaa", //f8f8f8
             }}
           />
           <MessageFilled
@@ -119,8 +236,12 @@ export default class detail extends Component {
           className="comment_wrap"
           style={{ display: commentVisible ? "" : "none" }}
         >
-          <Input></Input>
-          <Button className="btn" type="primary">
+          <Input
+            value={comment}
+            onKeyDown={e=> this.handleEnter(e)}
+            onChange={this.handleComment}
+          ></Input>
+          <Button className="btn" type="primary" onClick={this.commitComment}>
             评论
           </Button>
         </div>
@@ -138,7 +259,15 @@ export default class detail extends Component {
                   title={item.commenter}
                   description={item.content}
                 />
-                <Button type="danger">删除</Button>
+                <Button
+                  type="danger"
+                  style={{ display: item.uid === user.uid ? "" : "none" }}
+                  onClick={() =>
+                    this.deleteComment(item.cid, item.uid, item.nid)
+                  }
+                >
+                  删除
+                </Button>
               </List.Item>
             )}
           />
