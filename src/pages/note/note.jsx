@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Table, Space, Tag, Modal, message } from "antd";
 import ajax from "../../api/ajax";
+import global from "../../store/index";
 import "./note.scss";
 
 export default class note extends Component {
@@ -26,7 +27,7 @@ export default class note extends Component {
         title: "标签",
         dataIndex: "tag",
         key: "tag",
-        render: (tag,note) => {
+        render: (tag, note) => {
           // console.log(tag, note);
           return <Tag color={note.color}>{tag}</Tag>;
         },
@@ -42,7 +43,12 @@ export default class note extends Component {
             </Button>
             <Button
               type="primary"
-              onClick={() => this.props.history.push("/main/publish")}
+              onClick={() =>
+                this.props.history.push({
+                  pathname: "/main/publish",
+                  query: { note: e },
+                })
+              }
             >
               修改
             </Button>
@@ -62,7 +68,7 @@ export default class note extends Component {
     ],
   };
 
-  // 删除
+  // 删除贴文
   handleDelete = (e) => {
     console.log(e);
     Modal.confirm({
@@ -70,8 +76,19 @@ export default class note extends Component {
       okText: "确认",
       cancelText: "取消",
       onOk: () => {
-        // this.props.history.replace("/login");
-        message.success(`已删除《${e.title}》贴文`,1);
+        const { user } = global;
+        ajax("/deletenote", { nid: e.nid, uid: user.uid }, "POST")
+          .then((res) => {
+            console.log(res);
+            const { status, msg } = res;
+            if (status !== 1) return message.error(msg, 1);
+            message.success(`已删除《${e.title}》贴文`, 1);
+            this.getMyNote(user.uid);
+          })
+          .catch((err) => {
+            console.log(err);
+            // message.error('服务器错误');
+          });
       },
     });
   };
@@ -79,9 +96,8 @@ export default class note extends Component {
   //显示更多
   showMore = (e) => {
     console.log(e);
-    const {nid} = e;
+    const { nid } = e;
     this.props.history.push({ pathname: "/main/detail", query: { nid } });
-
   };
 
   // 获取贴文
@@ -90,7 +106,7 @@ export default class note extends Component {
       .then((res) => {
         console.log(res);
         const { status, data, msg } = res;
-        if (status !== 1) return message.error(msg,1);
+        if (status !== 1) return message.error(msg, 1);
         const noteList = data.map((note, index) => {
           return {
             ...note,
@@ -98,7 +114,7 @@ export default class note extends Component {
           };
         });
         this.setState({ noteList });
-        message.success("获取贴文成功",1);
+        // message.success("获取贴文成功", 1);
       })
       .catch((err) => {
         console.log(err);
