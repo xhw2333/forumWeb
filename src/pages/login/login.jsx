@@ -20,9 +20,9 @@ export default class login extends Component {
       },
     } = this;
     console.log(name, pwd);
-    if (checkValIsNull(name)) return message.info("用户名不能为空！");
-    if (checkValIsNull(pwd)) return message.info("密码不能为空！");
-    message.success("登陆成功");
+    if (checkValIsNull(name)) return message.info("用户名不能为空！",1);
+    if (checkValIsNull(pwd)) return message.info("密码不能为空！",1);
+    message.success("登陆成功",1);
     setTimeout(()=>this.props.history.push("/main/"),500);
   };
 
@@ -41,11 +41,11 @@ export default class login extends Component {
     } = this;
 
     console.log(name,pwd,npwd);
-    if (checkValIsNull(name)) return message.info("用户名不能为空！");
-    if (checkValIsNull(pwd)) return message.info("密码不能为空！");
-    if(pwd !== npwd) return message.info("输入的密码不一致");
+    if (checkValIsNull(name)) return message.info("用户名不能为空！",1);
+    if (checkValIsNull(pwd)) return message.info("密码不能为空！",1);
+    if(pwd !== npwd) return message.info("输入的密码不一致",1);
 
-    message.success("注册成功");
+    message.success("注册成功",1);
   };
 
   // 开关

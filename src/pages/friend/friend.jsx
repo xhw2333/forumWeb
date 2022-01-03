@@ -6,14 +6,14 @@ import "./friend.scss";
 export default class friend extends Component {
   state = {
     friendList: [
-      {
-        uid: 1,
-        name: "xhw",
-      },
-      {
-        uid: 2,
-        name: "xhw233",
-      },
+      // {
+      //   uid: 1,
+      //   name: "xhw",
+      // },
+      // {
+      //   uid: 2,
+      //   name: "xhw233",
+      // },
     ],
     friendModal: false, //好友搜索展示框
     // 搜索好友展示用
@@ -51,7 +51,7 @@ export default class friend extends Component {
       cancelText: "取消",
       onOk: () => {
         // this.props.history.replace("/login");
-        message.success(`已删除好友${e.name}`);
+        message.success(`已删除好友${e.name}`,1);
       },
     });
   };
@@ -63,7 +63,7 @@ export default class friend extends Component {
   };
 
   addFriend = () => {
-    message.success("添加成功");
+    message.success("添加成功",1);
     this.toggleModal();
   };
 
@@ -86,7 +86,7 @@ export default class friend extends Component {
       console.log(res);
       const {status,msg,data} = res;
       if(status !== 1) return message.error(msg,1);
-      message.success("获取好友列表成功");
+      message.success("获取好友列表成功",1);
       this.setState({friendList:data});
     }).catch(err=>{
       console.log(err);
@@ -94,7 +94,7 @@ export default class friend extends Component {
   }
 
   componentWillMount(){
-    // this.getFriendList();
+    this.getFriendList();
   }
 
   render() {

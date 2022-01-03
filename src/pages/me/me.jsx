@@ -40,7 +40,7 @@ export default class me extends Component {
   };
 
   componentWillMount() {
-    this.getUserBase(1);
+    // this.getUserBase(1);
   }
 
   render() {

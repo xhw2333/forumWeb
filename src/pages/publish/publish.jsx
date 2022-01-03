@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Input, Select,Button } from "antd";
+import { Input, Select, Button } from "antd";
 import "./publish.scss";
+import ajax from "../../api/ajax";
 
 export default class publish extends Component {
   state = {
@@ -24,6 +25,29 @@ export default class publish extends Component {
     ],
   };
 
+  commitNote = () => {
+    const {
+      content: {
+        resizableTextArea: {
+          props: { value: content },
+        },
+      },
+      title: {
+        state: { value: title },
+      },
+    } = this || {};
+    console.log(content, title);
+    const data = {
+      content,
+      title
+    }
+    ajax('',data,"POST").then(res=>{
+      console.log(res);
+    }).catch(err=>{
+      console.log(err);
+    })
+  };
+
   render() {
     const { tagArr } = this.state;
     return (
@@ -35,7 +59,7 @@ export default class publish extends Component {
           <div className="">
             <span>标题：</span>
             <Input
-              ref={(c) => (this.name = c)}
+              ref={(c) => (this.title = c)}
               style={{ width: "60%" }}
             ></Input>
           </div>
@@ -59,14 +83,27 @@ export default class publish extends Component {
           <div className="content">
             <span>内容：</span>
             <Input.TextArea
-              ref={(c) => (this.name = c)}
+              ref={(c) => (this.content = c)}
               style={{ width: "60%" }}
               autoSize={{ minRows: 5, maxRows: 8 }}
             ></Input.TextArea>
           </div>
           <div className="btn_wrap">
-              <Button className="btn" size="large" onClick={()=>this.props.history.goBack()}>返回</Button>
-              <Button type="primary" className="btn" size="large">保存</Button>
+            <Button
+              className="btn"
+              size="large"
+              onClick={() => this.props.history.goBack()}
+            >
+              返回
+            </Button>
+            <Button
+              type="primary"
+              className="btn"
+              size="large"
+              onClick={this.commitNote}
+            >
+              保存
+            </Button>
           </div>
         </div>
       </div>

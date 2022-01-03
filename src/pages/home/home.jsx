@@ -12,29 +12,29 @@ export default class home extends Component {
     tagList: [
       {
         tid: -1,
-        title: "全部",
+        tag: "全部",
         color: "black",
       },
-      {
-        tid: 1,
-        title: "学习",
-        color: "black",
-      },
-      {
-        tid: 2,
-        title: "生活",
-        color: "black",
-      },
-      {
-        tid: 3,
-        title: "美食",
-        color: "black",
-      },
-      {
-        tid: 4,
-        title: "其他",
-        color: "black",
-      },
+      // {
+      //   tid: 1,
+      //   title: "学习",
+      //   color: "black",
+      // },
+      // {
+      //   tid: 2,
+      //   title: "生活",
+      //   color: "black",
+      // },
+      // {
+      //   tid: 3,
+      //   title: "美食",
+      //   color: "black",
+      // },
+      // {
+      //   tid: 4,
+      //   title: "其他",
+      //   color: "black",
+      // },
     ],
     // 当前标签索引
     curIndex: 0,
@@ -64,7 +64,20 @@ export default class home extends Component {
 
   // 切换标签
   changeTag = (index) => {
+    const { tagList } = this.state;
     this.setState({ curIndex: index });
+    ajax("/notelist", index === 0 ? {} : { tid: tagList[index].tid })
+      .then((res) => {
+        console.log(res);
+        const {data,status,msg} = res;
+        if(status !== 1) return message.error(msg);
+        message.success("获取贴文成功",1);
+        this.setState({noteList:data});
+        console.log(this.state.noteList);
+      })
+      .catch((err) => {
+        message.error("服务器错误",1);
+      });
   };
 
   // 获取标签列表
@@ -77,7 +90,7 @@ export default class home extends Component {
 
         if (status !== 1) return message.error(msg);
         this.setState({ tagList: [...tagList, ...tag] });
-        message.success("获取分区成功");
+        message.success("获取分区成功",1);
       })
       .catch((err) => {
         console.log(err);
@@ -90,7 +103,7 @@ export default class home extends Component {
       .then((res) => {
         const { data: noteList, status, msg } = res;
         if (status !== 1) return message.error(msg);
-        message.success("获取贴文成功",1);
+        message.success("获取贴文成功", 1);
         this.setState({ noteList });
       })
       .catch((err) => {
@@ -99,8 +112,8 @@ export default class home extends Component {
   };
 
   componentWillMount() {
-    // this.reqTagList();
-    // this.reqNoteList();
+    this.reqTagList();
+    this.reqNoteList();
   }
 
   render() {
@@ -122,7 +135,7 @@ export default class home extends Component {
                 onClick={() => this.changeTag(index)}
                 className={curIndex === index ? "active" : ""}
               >
-                {tag.title}
+                {tag.tag}
               </li>
             );
           })}

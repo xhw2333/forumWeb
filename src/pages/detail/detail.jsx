@@ -8,13 +8,13 @@ export default class detail extends Component {
   state = {
     // 评论区
     commentList: [
-      {
-        cid: -1,
-        commenter: "***",
-        content: "***",
-        nid: -1,
-        uid: -1,
-      },
+      // {
+      //   cid: -1,
+      //   commenter: "***",
+      //   content: "***",
+      //   nid: -1,
+      //   uid: -1,
+      // },
     ],
     // 评论框
     commentVisible: false,
@@ -74,7 +74,7 @@ export default class detail extends Component {
 
       message.success("获取贴文详情成功",1);
     } catch (e) {
-      message.error("服务器内部错误");
+      message.error("服务器内部错误",1);
     }
   };
 
@@ -82,7 +82,7 @@ export default class detail extends Component {
     // console.log(this.props);
     const { nid } = this.props.location.query || {};
     console.log(nid);
-    // this.getNoteDetail(nid);
+    this.getNoteDetail(nid);
   }
 
   render() {

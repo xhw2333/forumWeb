@@ -52,13 +52,13 @@ export default class note extends Component {
       },
     ],
     noteList: [
-      {
-        key: '1',
-        title: "合肥",
-        author: "xhw",
-        date: "2021-12-08",
-        tag: "生活",
-      },
+      // {
+      //   key: '1',
+      //   title: "合肥",
+      //   author: "xhw",
+      //   date: "2021-12-08",
+      //   tag: "生活",
+      // },
     ],
   };
 
@@ -71,7 +71,7 @@ export default class note extends Component {
       cancelText: "取消",
       onOk: () => {
         // this.props.history.replace("/login");
-        message.success(`已删除《${e.title}》贴文`);
+        message.success(`已删除《${e.title}》贴文`,1);
       },
     });
   };
@@ -79,7 +79,9 @@ export default class note extends Component {
   //显示更多
   showMore = (e) => {
     console.log(e);
-    this.props.history.push("/main/detail");
+    const {nid} = e;
+    this.props.history.push({ pathname: "/main/detail", query: { nid } });
+
   };
 
   // 获取贴文
@@ -104,7 +106,7 @@ export default class note extends Component {
   };
 
   componentWillMount() {
-    // this.getMyNote(1);
+    this.getMyNote(1);
   }
 
   render() {
