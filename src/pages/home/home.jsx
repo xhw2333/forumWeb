@@ -69,14 +69,14 @@ export default class home extends Component {
     ajax("/notelist", index === 0 ? {} : { tid: tagList[index].tid })
       .then((res) => {
         console.log(res);
-        const {data,status,msg} = res;
-        if(status !== 1) return message.error(msg);
-        message.success("获取贴文成功",1);
-        this.setState({noteList:data});
+        const { data, status, msg } = res;
+        if (status !== 1) return message.error(msg);
+        message.success("获取贴文成功", 1);
+        this.setState({ noteList: data });
         console.log(this.state.noteList);
       })
       .catch((err) => {
-        message.error("服务器错误",1);
+        message.error("服务器错误", 1);
       });
   };
 
@@ -90,7 +90,7 @@ export default class home extends Component {
 
         if (status !== 1) return message.error(msg);
         this.setState({ tagList: [...tagList, ...tag] });
-        message.success("获取分区成功",1);
+        message.success("获取分区成功", 0.5);
       })
       .catch((err) => {
         console.log(err);
@@ -98,8 +98,9 @@ export default class home extends Component {
   };
 
   // 获取贴文情况
-  reqNoteList = () => {
-    ajax("/notelist")
+  reqNoteList = (uid = -1) => {
+    if (uid !== -1) this.setState({ curIndex: -1 });
+    ajax("/notelist", uid === -1 ? {} : { uid })
       .then((res) => {
         const { data: noteList, status, msg } = res;
         if (status !== 1) return message.error(msg);
@@ -113,7 +114,13 @@ export default class home extends Component {
 
   componentWillMount() {
     this.reqTagList();
-    this.reqNoteList();
+    const { location } = this.props;
+    let id = -1;
+    if ("query" in location) {
+      const { uid } = location.query;
+      id = uid;
+    }
+    this.reqNoteList(id);
   }
 
   render() {
@@ -144,10 +151,9 @@ export default class home extends Component {
           {!noteList.length && (
             <div style={{ textAlign: "center" }}>暂无数据</div>
           )}
-          {noteList.length &&
-            noteList.map((note, index) => {
-              return <NoteItem key={index} note={note}></NoteItem>;
-            })}
+          {noteList.map((note, index) => {
+            return <NoteItem key={index} note={note}></NoteItem>;
+          })}
         </div>
       </div>
     );

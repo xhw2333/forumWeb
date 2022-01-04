@@ -17,7 +17,7 @@ export default class main extends Component {
         <Header></Header>
         <div className="main_wrap">
           <Switch>
-            <Route exact path="/main/home" component={Home}></Route>
+            <Route exact path="/main/home/" component={Home}></Route>
             <Route exact path="/main/note" component={Note}></Route>
             <Route exact path="/main/friend" component={Friend}></Route>
             <Route exact path="/main/me" component={Me}></Route>

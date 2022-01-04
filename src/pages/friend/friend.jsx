@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { List, Avatar, Button, Modal, message, Input, Table } from "antd";
-import ajax from '../../api/ajax';
+import ajax from "../../api/ajax";
+import global from "../../store/index";
 import "./friend.scss";
 
 export default class friend extends Component {
@@ -34,7 +35,7 @@ export default class friend extends Component {
         ),
       },
     ],
-    dataSource: [
+    userList: [
       {
         key: "1",
         name: "xhw",
@@ -51,54 +52,102 @@ export default class friend extends Component {
       cancelText: "取消",
       onOk: () => {
         // this.props.history.replace("/login");
-        message.success(`已删除好友${e.name}`,1);
+        const { user } = global;
+        ajax("/deletefriend", { uid: user.uid, fid: e.id }, "POST")
+          .then((res) => {
+            console.log(res);
+            const { status, msg } = res;
+            if (status !== 1) return message.error(msg, 1);
+            message.success(`已删除好友${e.name}`, 1);
+            this.getFriendList(user.uid);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       },
     });
   };
 
   //   查看好友更多信息
   goFriend = (e) => {
-    console.log(e);
-    this.props.history.push("/main/home");
+    this.props.history.push({
+      pathname: "/main/home/",
+      query: { uid: e.id },
+    });
   };
 
-  addFriend = () => {
-    message.success("添加成功",1);
-    this.toggleModal();
+  // 添加好友
+  addFriend = (e) => {
+    const { user } = global;
+    console.log(e);
+    if (e.id === user.uid) return message.error("不能添加自己为好友");
+    ajax("/addfriend", { uid: user.uid, fid: e.id }, "POST")
+      .then((res) => {
+        const { msg, status } = res;
+        if (status !== 1) return message.info(msg, 1);
+        message.success(msg, 1);
+        this.getFriendList(user.uid);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // 开关
   toggleModal = () => {
     const { friendModal } = this.state;
-    this.setState({ friendModal: !friendModal });
-    // this.searchVal.state.value = "";
+    // 清空数据
+    if (this.searchVal) this.searchVal.state.value = "";
+    this.setState({
+      friendModal: !friendModal,
+      userList: [],
+    });
   };
 
   //   搜索好友
   onSearch = (e) => {
     console.log(e);
-    //   this.searchVal.state.value = '';
+    ajax("/searchuser", { key: e }, "POST")
+      .then((res) => {
+        console.log(res);
+        let { data, status, msg } = res;
+        if (status !== 1) return message.error(msg, 1);
+        data = data.map((user, index) => {
+          return {
+            key: index,
+            ...user,
+          };
+        });
+        this.setState({ userList: data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // 获取好友列表
-  getFriendList = (uid=1)=>{
-    ajax('/friendlist',{uid}).then(res=>{
-      console.log(res);
-      const {status,msg,data} = res;
-      if(status !== 1) return message.error(msg,1);
-      message.success("获取好友列表成功",1);
-      this.setState({friendList:data});
-    }).catch(err=>{
-      console.log(err);
-    })
-  }
+  getFriendList = (uid = 1) => {
+    ajax("/friendlist", { uid })
+      .then((res) => {
+        console.log(res);
+        const { status, msg, data } = res;
+        if (status !== 1) return message.error(msg, 1);
+        // message.success("获取好友列表成功", 1);
+        this.setState({ friendList: data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  componentWillMount(){
-    this.getFriendList();
+  componentWillMount() {
+    // 获取用户id
+    const { user } = global;
+    this.getFriendList(user.uid);
   }
 
   render() {
-    const { friendList, friendModal, columns, dataSource } = this.state;
+    const { friendList, friendModal, columns, userList } = this.state;
     return (
       <div className="friend">
         <div className="top">
@@ -157,13 +206,14 @@ export default class friend extends Component {
               placeholder="输入关键字搜索好友"
               ref={(c) => (this.searchVal = c)}
               onSearch={this.onSearch}
+              // allowClear
               enterButton
             />
             <Table
               className="table"
               pagination={false}
               columns={columns}
-              dataSource={dataSource}
+              dataSource={userList}
               bordered
             ></Table>
           </div>
