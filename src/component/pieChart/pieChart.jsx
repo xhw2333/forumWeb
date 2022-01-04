@@ -3,42 +3,22 @@ import { Chart, Util } from "@antv/g2";
 import "./pieChart.scss";
 
 export default class pieChart extends Component {
-  state = {
-    classify: [
-      { type: "学习", value: 2 },
-      { type: "生活", value: 2 },
-      { type: "美食", value: 2 },
-      { type: "其他", value: 2 },
-    ],
-    noteTotal: 8,
-    chart: null,
-  };
+  state = {};
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // console.log(nextProps, prevState);
-    const { classify, noteTotal } = nextProps;
+  componentWillMount() {
+  }
 
-    // 此作用为将此映射为state
-    return {
-      classify,
-      noteTotal,
-    };
+  componentWillReceiveProps(nextProps) {
+    const { noteTotal, classify } = nextProps;
+    if (nextProps.noteTotal !== this.props.noteTotal) {
+      this.pieRender(classify, noteTotal);
+    }
   }
 
   componentDidMount() {
-    console.log("渲染完毕");
-    const e = document.createEvent("Event");
-    e.initEvent("resize", true, true);
-    window.dispatchEvent(e);
-    this.pieRender();
   }
 
-  componentDidUpdate() {
-    // this.pieRender();
-  }
-
-  pieRender = () => {
-    let { classify, noteTotal } = this.state;
+  pieRender = (classify, noteTotal) => {
     const data = classify.map((item) => {
       return {
         type: item.tag,

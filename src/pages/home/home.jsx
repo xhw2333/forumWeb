@@ -40,19 +40,19 @@ export default class home extends Component {
     curIndex: 0,
     // 贴文列表
     noteList: [
-      {
-        author: "xhw",
-        color: "red",
-        comment: 2,
-        content: "打发打发",
-        date: "2021-12-08",
-        nid: 1,
-        praise: 1,
-        tag: "生活",
-        tid: 2,
-        title: "合肥",
-        uid: 1,
-      },
+      // {
+      //   author: "xhw",
+      //   color: "red",
+      //   comment: 2,
+      //   content: "打发打发",
+      //   date: "2021-12-08",
+      //   nid: 1,
+      //   praise: 1,
+      //   tag: "生活",
+      //   tid: 2,
+      //   title: "合肥",
+      //   uid: 1,
+      // },
       {},
     ],
   };

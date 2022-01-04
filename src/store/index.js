@@ -1,8 +1,8 @@
 // 存放全局变量
 const global = {
     user: {
-        name: '',
-        pwd: '',
+        name: 'test',
+        pwd: '123456',
         uid: 1,
     },
     tagArr: [
