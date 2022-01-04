@@ -33,6 +33,24 @@
             width: 350px;
             margin: 20px 0;
 
+            &.code {
+                >div {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .imgPic {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-left: 10px;
+                        min-height: 50px;
+                        background: #fff;
+                        color: #000;
+                    }
+                }
+            }
+
             >span {
                 white-space: nowrap;
             }

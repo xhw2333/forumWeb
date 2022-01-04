@@ -3,12 +3,13 @@ import { Input, Button, message } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import { checkValIsNull } from "../../utils/check";
 import ajax from "../../api/ajax";
-import global from '../../store/index';
+import global from "../../store/index";
 import "./login.scss";
 
 export default class login extends Component {
   state = {
     loginModal: true,
+    imgURL: "",
   };
 
   // 登录
@@ -20,12 +21,16 @@ export default class login extends Component {
       pwd: {
         state: { value: pwd = "" },
       },
+      code: {
+        state: { value: code = "" },
+      },
     } = this;
-    console.log(name, pwd);
+    console.log(name, pwd, code);
     if (checkValIsNull(name)) return message.info("用户名不能为空！", 1);
     if (checkValIsNull(pwd)) return message.info("密码不能为空！", 1);
+    if (checkValIsNull(code)) return message.info("验证码不能为空！", 1);
 
-    ajax("/login", { name, pwd },"POST")
+    ajax("/login", { name, pwd, code:code.toLowerCase() }, "POST")
       .then((res) => {
         const { status, msg, data } = res;
         if (status !== 1) return message.error(msg, 1);
@@ -38,7 +43,7 @@ export default class login extends Component {
         setTimeout(() => this.props.history.push("/main/"), 500);
       })
       .catch((err) => {
-        message.error("服务器内部错误",1);
+        message.error("服务器内部错误", 1);
       });
   };
 
@@ -60,17 +65,33 @@ export default class login extends Component {
     if (checkValIsNull(name)) return message.info("用户名不能为空！", 1);
     if (checkValIsNull(pwd)) return message.info("密码不能为空！", 1);
     if (pwd !== npwd) return message.info("输入的密码不一致", 1);
-    ajax('/register',{name,pwd},"POST").then(res=>{
-      const {msg,status} = res;
-      if(status !== 1) return message.error(msg,1);
-      // 注册成功
-      message.success(msg,1);
-      this.rname.state.value = '';
-      this.rpwd.state.value = '';
-      this.rnpwd.state.value = '';
-    }).catch(err=>{
-      message.error("服务器内部错误",1);
-    })
+    ajax("/register", { name, pwd }, "POST")
+      .then((res) => {
+        const { msg, status } = res;
+        if (status !== 1) return message.error(msg, 1);
+        // 注册成功
+        message.success(msg, 1);
+        this.rname.state.value = "";
+        this.rpwd.state.value = "";
+        this.rnpwd.state.value = "";
+      })
+      .catch((err) => {
+        message.error("服务器内部错误", 1);
+      });
+  };
+
+  // 获取验证码
+  getCode = () => {
+    ajax("/code")
+      .then((res) => {
+        const { data } = res;
+        this.setState({ imgURL: data });
+        let img = document.querySelector(".imgPic");
+        img.innerHTML = data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // 开关
@@ -78,6 +99,10 @@ export default class login extends Component {
     const { loginModal } = this.state;
     this.setState({ loginModal: !loginModal });
   };
+
+  componentWillMount() {
+    this.getCode();
+  }
 
   render() {
     const { loginModal } = this.state;
@@ -104,13 +129,17 @@ export default class login extends Component {
                 style={{ width: "70%" }}
               ></Input.Password>
             </div>
-            {/* <div className="code">
+            <div className="code">
               <span>验证码</span>
               <div style={{ width: "70%" }}>
-                <Input style={{}}></Input>
-                <img src="../../assets/logo.png" alt="" />
+                <Input
+                  ref={(c) => (this.code = c)}
+                  style={{ width: "50%" }}
+                ></Input>
+                <div className="imgPic" onClick={this.getCode}>获取验证码</div>
+                {/* <img className="img" src={imgURL} alt="验证码" /> */}
               </div>
-            </div> */}
+            </div>
             <div className="to">
               <span onClick={this.toggleBtn}>还未注册，前往注册→</span>
             </div>

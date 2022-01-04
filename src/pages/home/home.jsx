@@ -3,6 +3,7 @@ import { Input, message } from "antd";
 import NoteItem from "../../component/noteItem/noteItem";
 import ajax from "../../api/ajax";
 import global from "../../store/index";
+import { checkValIsNull } from "../../utils/check";
 import "./home.scss";
 
 const { Search } = Input;
@@ -59,8 +60,21 @@ export default class home extends Component {
   };
 
   // 搜索内容
-  onSearch = (value) => {
-    console.log(value);
+  onSearch = (key) => {
+    console.log(key);
+    if (checkValIsNull(key)) return message.error("请输入内容", 1);
+    ajax("/notelist", { key })
+      .then((res) => {
+        console.log(res);
+        const { data, status, msg } = res;
+        if (status !== 1) return message.error(msg);
+        message.success("搜索结果已展示");
+        this.setState({ noteList: data, curIndex: -1 });
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("服务器内部错误");
+      });
   };
 
   // 切换标签
@@ -95,7 +109,7 @@ export default class home extends Component {
         message.success("获取分区成功", 0.5);
       })
       .catch((err) => {
-        message.error("服务器内部错误",1);
+        message.error("服务器内部错误", 1);
       });
   };
 
@@ -110,7 +124,7 @@ export default class home extends Component {
         this.setState({ noteList });
       })
       .catch((err) => {
-        message.error("服务器内部错误",1);
+        message.error("服务器内部错误", 1);
       });
   };
 
