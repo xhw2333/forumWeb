@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Input, message } from "antd";
 import NoteItem from "../../component/noteItem/noteItem";
 import ajax from "../../api/ajax";
+import global from "../../store/index";
 import "./home.scss";
 
 const { Search } = Input;
@@ -90,10 +91,11 @@ export default class home extends Component {
 
         if (status !== 1) return message.error(msg);
         this.setState({ tagList: [...tagList, ...tag] });
+        global.tagArr = tag;
         message.success("获取分区成功", 0.5);
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误",1);
       });
   };
 
@@ -108,7 +110,7 @@ export default class home extends Component {
         this.setState({ noteList });
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误",1);
       });
   };
 

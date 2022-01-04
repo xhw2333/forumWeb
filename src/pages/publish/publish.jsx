@@ -79,7 +79,11 @@ export default class publish extends Component {
         });
       })
       .catch((err) => {
-        console.log(err);
+        if (uid === -1) {
+          message.info("请先登录！", 1);
+        } else {
+          message.error("服务器内部错误", 1);
+        }
       });
   };
 
@@ -104,10 +108,14 @@ export default class publish extends Component {
         if (status !== 1) return message.error(msg, 1);
         // 修改成功
         message.success("修改成功", 1);
-        this.setState({ifEdit:false});
+        this.setState({ ifEdit: false });
       })
       .catch((err) => {
-        console.log(err);
+        if (user.uid === -1) {
+          message.info("请先登录！", 1);
+        } else {
+          message.error("服务器内部错误", 1);
+        }
       });
   };
 
@@ -214,7 +222,7 @@ export default class publish extends Component {
               size="large"
               onClick={this.commitNote}
             >
-            {/* 添加贴文用的保存按钮 */}
+              {/* 添加贴文用的保存按钮 */}
               保存
             </Button>
             <Button
@@ -222,9 +230,11 @@ export default class publish extends Component {
               type="dashed"
               className="btn"
               size="large"
-              onClick={()=>{this.setState({ifEdit:!ifEdit})}}
+              onClick={() => {
+                this.setState({ ifEdit: !ifEdit });
+              }}
             >
-              {ifEdit?'取消':'编辑'}
+              {ifEdit ? "取消" : "编辑"}
             </Button>
             <Button
               style={{ display: ifPublish ? "block" : "none" }}

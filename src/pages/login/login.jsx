@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Input, Button, message } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import { checkValIsNull } from "../../utils/check";
+import ajax from "../../api/ajax";
+import global from '../../store/index';
 import "./login.scss";
 
 export default class login extends Component {
@@ -20,10 +22,24 @@ export default class login extends Component {
       },
     } = this;
     console.log(name, pwd);
-    if (checkValIsNull(name)) return message.info("用户名不能为空！",1);
-    if (checkValIsNull(pwd)) return message.info("密码不能为空！",1);
-    message.success("登陆成功",1);
-    setTimeout(()=>this.props.history.push("/main/"),500);
+    if (checkValIsNull(name)) return message.info("用户名不能为空！", 1);
+    if (checkValIsNull(pwd)) return message.info("密码不能为空！", 1);
+
+    ajax("/login", { name, pwd },"POST")
+      .then((res) => {
+        const { status, msg, data } = res;
+        if (status !== 1) return message.error(msg, 1);
+        // 登陆成功
+        message.success(msg, 1);
+        const { name, pwd, id } = data;
+        global.user.name = name;
+        global.user.pwd = pwd;
+        global.user.uid = id;
+        setTimeout(() => this.props.history.push("/main/"), 500);
+      })
+      .catch((err) => {
+        message.error("服务器内部错误",1);
+      });
   };
 
   // 处理注册
@@ -40,12 +56,21 @@ export default class login extends Component {
       },
     } = this;
 
-    console.log(name,pwd,npwd);
-    if (checkValIsNull(name)) return message.info("用户名不能为空！",1);
-    if (checkValIsNull(pwd)) return message.info("密码不能为空！",1);
-    if(pwd !== npwd) return message.info("输入的密码不一致",1);
-
-    message.success("注册成功",1);
+    console.log(name, pwd, npwd);
+    if (checkValIsNull(name)) return message.info("用户名不能为空！", 1);
+    if (checkValIsNull(pwd)) return message.info("密码不能为空！", 1);
+    if (pwd !== npwd) return message.info("输入的密码不一致", 1);
+    ajax('/register',{name,pwd},"POST").then(res=>{
+      const {msg,status} = res;
+      if(status !== 1) return message.error(msg,1);
+      // 注册成功
+      message.success(msg,1);
+      this.rname.state.value = '';
+      this.rpwd.state.value = '';
+      this.rnpwd.state.value = '';
+    }).catch(err=>{
+      message.error("服务器内部错误",1);
+    })
   };
 
   // 开关

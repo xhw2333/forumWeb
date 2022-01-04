@@ -62,7 +62,11 @@ export default class friend extends Component {
             this.getFriendList(user.uid);
           })
           .catch((err) => {
-            console.log(err);
+            if (user.uid === -1) {
+              message.info("请先登录！", 1);
+            } else {
+              message.error("服务器内部错误", 1);
+            }
           });
       },
     });
@@ -89,7 +93,7 @@ export default class friend extends Component {
         this.getFriendList(user.uid);
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误", 1);
       });
   };
 
@@ -121,12 +125,12 @@ export default class friend extends Component {
         this.setState({ userList: data });
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误", 1);
       });
   };
 
   // 获取好友列表
-  getFriendList = (uid = 1) => {
+  getFriendList = (uid) => {
     ajax("/friendlist", { uid })
       .then((res) => {
         console.log(res);
@@ -136,7 +140,7 @@ export default class friend extends Component {
         this.setState({ friendList: data });
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误", 1);
       });
   };
 

@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { NavLink, withRouter, Link } from "react-router-dom";
+import global from "../../store/index";
 import { Modal } from "antd";
 import "./header.scss";
 
 class header extends Component {
   state = {
+    name: "",
     ifLogin: false,
   };
 
@@ -17,17 +19,30 @@ class header extends Component {
       cancelText: "取消",
       onOk: () => {
         this.props.history.replace("/login");
+        global.user.uid = -1;
+        global.user.name = '';
+        global.user.pwd = '';
         this.setState({ ifLogin: !ifLogin });
       },
     });
   };
 
+  componentWillMount() {
+    const { user } = global;
+    if (user.uid !== -1) {
+      this.setState({
+        ifLogin: true,
+        name: user.name,
+      });
+    }
+  }
+
   render() {
-    const { ifLogin } = this.state;
+    const { ifLogin,name } = this.state;
     return (
       <div className="header">
         <div className="logo_wrap">
-          <h1>LOGO</h1>
+          <h1>论坛系统</h1>
           {/* <img src="" alt="" /> */}
         </div>
         <div className="nav">
@@ -46,10 +61,8 @@ class header extends Component {
         </div>
         <div className="tip_wrap">
           <div style={{ display: ifLogin ? "" : "none" }}>
-            {}，欢迎你！
-            <span onClick={this.handleExit}>
-              退出
-            </span>
+            {name}，欢迎你！
+            <span onClick={this.handleExit}>退出</span>
           </div>
           <Link style={{ display: ifLogin ? "none" : "" }} to="/login">
             登录 | 注册

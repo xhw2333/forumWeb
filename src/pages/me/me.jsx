@@ -35,7 +35,11 @@ export default class me extends Component {
         this.setState({ friendCount, noteTotal, classify });
       })
       .catch((err) => {
-        console.log(err);
+        if (uid === -1) {
+          message.info("请先登录！", 1);
+        } else {
+          message.error("服务器内部错误", 1);
+        }
       });
   };
 
@@ -82,7 +86,7 @@ export default class me extends Component {
       })
       .catch((err) => {
         // message.error(err);
-        console.log(err);
+        message.error("服务器内部错误", 1);
       });
   };
 
@@ -95,6 +99,7 @@ export default class me extends Component {
 
   componentDidMount() {
     const { user } = global;
+    console.log(global.tagArr);
     this.name.state.value = user.name;
     this.pwd.state.value = user.pwd;
   }

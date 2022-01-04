@@ -60,7 +60,11 @@ export default class detail extends Component {
           this.setState({ ifPraise: !ifPraise });
         })
         .catch((err) => {
-          console.log(err);
+          if (user.uid === -1) {
+            message.info("请先登录！", 1);
+          } else {
+            message.error("服务器内部错误", 1);
+          }
         });
     }
     // 已是没赞的状态，正准备点赞
@@ -75,7 +79,11 @@ export default class detail extends Component {
           this.setState({ ifPraise: !ifPraise });
         })
         .catch((err) => {
-          console.log(err);
+          if (user.uid === -1) {
+            message.info("请先登录！", 1);
+          } else {
+            message.error("服务器内部错误", 1);
+          }
         });
     }
   };
@@ -126,7 +134,7 @@ export default class detail extends Component {
         this.setState({ commentList: data });
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误",1);
       });
   };
 
@@ -166,7 +174,11 @@ export default class detail extends Component {
         this.getComment(note.nid);
       })
       .catch((err) => {
-        console.log(err);
+        if (user.uid === -1) {
+          message.info("请先登录！", 1);
+        } else {
+          message.error("服务器内部错误", 1);
+        }
       });
   };
 
@@ -188,7 +200,11 @@ export default class detail extends Component {
             this.getComment(nid);
           })
           .catch((err) => {
-            console.log(err);
+            if (user.uid === -1) {
+              message.info("请先登录！", 1);
+            } else {
+              message.error("服务器内部错误", 1);
+            }
           });
       },
     });

@@ -86,8 +86,11 @@ export default class note extends Component {
             this.getMyNote(user.uid);
           })
           .catch((err) => {
-            console.log(err);
-            // message.error('服务器错误');
+            if (user.uid === -1) {
+              message.info("请先登录！", 1);
+            } else {
+              message.error("服务器内部错误", 1);
+            }
           });
       },
     });
@@ -101,7 +104,7 @@ export default class note extends Component {
   };
 
   // 获取贴文
-  getMyNote = (uid = 1) => {
+  getMyNote = (uid) => {
     ajax("/notelist", { uid })
       .then((res) => {
         console.log(res);
@@ -117,12 +120,13 @@ export default class note extends Component {
         // message.success("获取贴文成功", 1);
       })
       .catch((err) => {
-        console.log(err);
+        message.error("服务器内部错误",1);
       });
   };
 
   componentWillMount() {
-    this.getMyNote(1);
+    const {user} = global;
+    this.getMyNote(user.uid);
   }
 
   render() {
