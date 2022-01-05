@@ -30,7 +30,7 @@ export default class login extends Component {
     if (checkValIsNull(pwd)) return message.info("密码不能为空！", 1);
     if (checkValIsNull(code)) return message.info("验证码不能为空！", 1);
 
-    ajax("/login", { name, pwd, code:code.toLowerCase() }, "POST")
+    ajax("/login", { name, pwd, code: code.toLowerCase() }, "POST")
       .then((res) => {
         const { status, msg, data } = res;
         if (status !== 1) return message.error(msg, 1);
@@ -91,6 +91,7 @@ export default class login extends Component {
       })
       .catch((err) => {
         console.log(err);
+        message.error("服务器内部错误", 1);
       });
   };
 
@@ -136,7 +137,9 @@ export default class login extends Component {
                   ref={(c) => (this.code = c)}
                   style={{ width: "50%" }}
                 ></Input>
-                <div className="imgPic" onClick={this.getCode}>获取验证码</div>
+                <div className="imgPic" onClick={this.getCode}>
+                  获取验证码
+                </div>
                 {/* <img className="img" src={imgURL} alt="验证码" /> */}
               </div>
             </div>
