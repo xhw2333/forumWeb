@@ -19,10 +19,10 @@ class header extends Component {
       okText: "确认",
       cancelText: "取消",
       onOk: () => {
-        this.props.history.replace("/login");
         global.user.uid = -1;
         global.user.name = "";
         global.user.pwd = "";
+        this.props.history.replace("/login");
         this.setState({ ifLogin: !ifLogin });
       },
     });

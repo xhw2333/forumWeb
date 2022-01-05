@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Pubsub from 'pubsub-js';
-import { Input, Button, Statistic, message } from "antd";
+import Pubsub from "pubsub-js";
+import { Input, Button, Statistic, message, Modal } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import Pie from "../../component/pieChart/pieChart";
 import ajax from "../../api/ajax";
@@ -86,12 +86,48 @@ export default class me extends Component {
         this.toggleBtn();
 
         // 通知头部组件名字信息修改了
-        Pubsub.publish("update", {name:name});
+        Pubsub.publish("update", { name: name });
       })
       .catch((err) => {
         // message.error(err);
         message.error("服务器内部错误", 1);
       });
+  };
+
+  // 注销
+  logout = () => {
+    Modal.confirm({
+      title: `确认注销？`,
+      okText: "确认",
+      cancelText: "取消",
+      onOk: () => {
+        // this.props.history.replace("/login");
+        const { user } = global;
+        ajax(
+          "/logout",
+          { uid: user.uid, name: user.name, pwd: user.pwd },
+          "POST"
+        )
+          .then((res) => {
+            console.log(res);
+            const { status, msg } = res;
+            if (status !== 1) return message.error(msg, 1);
+            // 用户成功注销后的操作
+            message.success(msg, 1);
+            global.user.uid = -1;
+            global.user.name = "";
+            global.user.pwd = "";
+            this.props.history.replace("/login");
+          })
+          .catch((err) => {
+            if (user.uid === -1) {
+              message.info("请先登录！", 1);
+            } else {
+              message.error("服务器内部错误", 1);
+            }
+          });
+      },
+    });
   };
 
   componentWillMount() {
@@ -170,6 +206,14 @@ export default class me extends Component {
                 onClick={this.toggleBtn}
               >
                 修改
+              </Button>
+              <Button
+                className="btn"
+                type="danger"
+                style={{ display: ifEdit ? "none" : "" }}
+                onClick={this.logout}
+              >
+                注销
               </Button>
               <>
                 <Button

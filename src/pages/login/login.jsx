@@ -74,6 +74,7 @@ export default class login extends Component {
         this.rname.state.value = "";
         this.rpwd.state.value = "";
         this.rnpwd.state.value = "";
+        setTimeout(()=>this.toggleBtn(),1000);
       })
       .catch((err) => {
         message.error("服务器内部错误", 1);
