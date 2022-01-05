@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Tag, List, Avatar, Input, Button, message, Modal } from "antd";
-import { LikeFilled, MessageFilled } from "@ant-design/icons";
+import { LikeFilled, MessageFilled,UserOutlined } from "@ant-design/icons";
 import ajax from "../../api/ajax";
 import global from "../../store/index";
 import { checkValIsNull } from "../../utils/check";
@@ -271,7 +271,7 @@ export default class detail extends Component {
             renderItem={(item) => (
               <List.Item>
                 <List.Item.Meta
-                  avatar={<Avatar />}
+                  avatar={<Avatar icon={<UserOutlined/>}/>}
                   title={item.commenter}
                   description={item.content}
                 />

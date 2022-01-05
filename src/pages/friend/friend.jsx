@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { List, Avatar, Button, Modal, message, Input, Table } from "antd";
+import {UserOutlined} from '@ant-design/icons';
 import ajax from "../../api/ajax";
 import global from "../../store/index";
 import "./friend.scss";
@@ -187,7 +188,7 @@ export default class friend extends Component {
               ]}
             >
               <List.Item.Meta
-                avatar={<Avatar />}
+                avatar={<Avatar icon={<UserOutlined />}/>}
                 title={item.name}
                 description="此用户很赖，没有介绍"
               />
