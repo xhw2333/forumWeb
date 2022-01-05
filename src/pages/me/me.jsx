@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Pubsub from 'pubsub-js';
 import { Input, Button, Statistic, message } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import Pie from "../../component/pieChart/pieChart";
@@ -83,6 +84,9 @@ export default class me extends Component {
         global.user.pwd = pwd;
         this.setState({ name });
         this.toggleBtn();
+
+        // 通知头部组件名字信息修改了
+        Pubsub.publish("update", {name:name});
       })
       .catch((err) => {
         // message.error(err);

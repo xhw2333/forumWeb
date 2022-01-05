@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Pubsub from "pubsub-js";
 import { NavLink, withRouter, Link } from "react-router-dom";
 import global from "../../store/index";
 import { Modal } from "antd";
@@ -6,6 +7,7 @@ import "./header.scss";
 
 class header extends Component {
   state = {
+    name: "",
     ifLogin: false,
   };
 
@@ -19,8 +21,8 @@ class header extends Component {
       onOk: () => {
         this.props.history.replace("/login");
         global.user.uid = -1;
-        global.user.name = '';
-        global.user.pwd = '';
+        global.user.name = "";
+        global.user.pwd = "";
         this.setState({ ifLogin: !ifLogin });
       },
     });
@@ -31,12 +33,26 @@ class header extends Component {
     if (user.uid !== -1) {
       this.setState({
         ifLogin: true,
+        name: user.name,
       });
     }
   }
 
+  componentDidMount() {
+    // 订阅
+    this.token = Pubsub.subscribe("update", (msg, data) => {
+      // const {name} = data;
+      this.setState(data);
+    });
+  }
+
+  componentWillUnmount() {
+    // 取消订阅
+    Pubsub.unsubscribe(this.token);
+  }
+
   render() {
-    const { ifLogin } = this.state;
+    const { ifLogin, name } = this.state;
     return (
       <div className="header">
         <div className="logo_wrap">
@@ -59,7 +75,7 @@ class header extends Component {
         </div>
         <div className="tip_wrap">
           <div style={{ display: ifLogin ? "" : "none" }}>
-            {global.user.name}，欢迎你！
+            {name}，欢迎你！
             <span onClick={this.handleExit}>退出</span>
           </div>
           <Link style={{ display: ifLogin ? "none" : "" }} to="/login">
