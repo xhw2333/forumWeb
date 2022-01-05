@@ -98,6 +98,8 @@ export default class login extends Component {
   // 开关
   toggleBtn = () => {
     const { loginModal } = this.state;
+    // 登陆页面呈现时，重新获取验证码
+    if(!loginModal) this.getCode();
     this.setState({ loginModal: !loginModal });
   };
 
