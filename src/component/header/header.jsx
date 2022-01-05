@@ -6,7 +6,6 @@ import "./header.scss";
 
 class header extends Component {
   state = {
-    name: "",
     ifLogin: false,
   };
 
@@ -32,13 +31,12 @@ class header extends Component {
     if (user.uid !== -1) {
       this.setState({
         ifLogin: true,
-        name: user.name,
       });
     }
   }
 
   render() {
-    const { ifLogin,name } = this.state;
+    const { ifLogin } = this.state;
     return (
       <div className="header">
         <div className="logo_wrap">
@@ -61,7 +59,7 @@ class header extends Component {
         </div>
         <div className="tip_wrap">
           <div style={{ display: ifLogin ? "" : "none" }}>
-            {name}，欢迎你！
+            {global.user.name}，欢迎你！
             <span onClick={this.handleExit}>退出</span>
           </div>
           <Link style={{ display: ifLogin ? "none" : "" }} to="/login">
