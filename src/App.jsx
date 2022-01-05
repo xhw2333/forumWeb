@@ -1,18 +1,25 @@
 import React, { Component } from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-import Main from "./pages/main/main";
-import Login from "./pages/login/login";
-
+import routes from "./routes/index";
 export default class App extends Component {
   render() {
     return (
       <BrowserRouter>
         <Switch>
-          <Route path="/main" component={Main}></Route>
-          <Route exact path="/login" component={Login}></Route>
+          {routes.map((r) => {
+            return (
+              <Route
+                key={r.path}
+                path={r.path}
+                component={r.component}
+                exact={r.exact}
+              ></Route>
+            );
+          })}
           <Redirect to="/login"></Redirect>
         </Switch>
       </BrowserRouter>
+      // routes
     );
   }
 }
